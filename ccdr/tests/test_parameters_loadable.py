@@ -17,5 +17,5 @@ def test_all_parameters_callable():
 def test_pending_parameters_returns_list():
     pending = P.pending_parameters()
     assert isinstance(pending, list)
-    # In the empty scaffold every parameter is pending.
-    assert pending  # non-empty
+    # Pending may be empty (all committed) or non-empty (empty scaffold);
+    # both are valid states.

@@ -1,0 +1,9 @@
+{
+  "source": "EHT shadow-diameter residuals vs Kerr",
+  "url": "EHT Collaboration M87* 2019 + SgrA* 2022",
+  "columns": ["target", "fractional_residual", "sigma"],
+  "rows": [
+    ["M87*",  0.000, 0.060],
+    ["SgrA*", 0.020, 0.070]
+  ]
+}

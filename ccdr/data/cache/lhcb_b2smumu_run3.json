@@ -1,0 +1,14 @@
+{
+  "source": "LHCb b->s μμ δC_9 extractions (per-observable)",
+  "url": "Aaij et al. (LHCb) Run-3 + global-fit literature",
+  "notes": "Each row maps an LHCb observable to its implied δC_9 (SM = 0).",
+  "columns": ["observable", "delta_C9", "sigma"],
+  "rows": [
+    ["from_R_K",         -0.45, 0.40],
+    ["from_R_Kstar",     -0.35, 0.45],
+    ["from_P5p_4_6",     -0.95, 0.30],
+    ["from_P5p_6_8",     -1.10, 0.30],
+    ["from_Bs_mumu",     -0.20, 0.25],
+    ["global_fit_2024",  -1.00, 0.20]
+  ]
+}

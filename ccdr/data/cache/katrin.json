@@ -1,0 +1,8 @@
+{
+  "source": "KATRIN tritium endpoint m_nu effective bound",
+  "url": "Aker et al. (KATRIN) 2022",
+  "columns": ["observable", "value_ev", "sigma_ev"],
+  "rows": [
+    ["m_nu_endpoint_upper_limit_ev", 0.80, 0.20]
+  ]
+}

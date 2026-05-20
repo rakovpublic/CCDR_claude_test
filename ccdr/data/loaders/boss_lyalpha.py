@@ -1,4 +1,11 @@
-"""BOSS Lyα flux power spectrum loader."""
-from ccdr.data.loaders._stub import stub
+"""BOSS Lyα flux power spectrum loader.
 
-load_pf_k = stub("boss_lyalpha_pf_k", "BOSS Lyα flux power spectrum P_F(k)")
+Payload contract for `harmonic_peak_detector`: iterable of (k, P) pairs.
+"""
+from ccdr.data.loaders._common import read_cached_json
+
+
+def load_pf_k():
+    data, sha = read_cached_json("boss_lyalpha_pf_k")
+    payload = [tuple(row) for row in data["rows"]]
+    return payload, sha

@@ -1,0 +1,13 @@
+{
+  "source": "HAYSTAC axion-photon coupling 90% CL exclusion",
+  "url": "Backes et al. (HAYSTAC) 2021",
+  "columns": ["m_a_ueV", "g_a_gamma_ul_GeV_inv"],
+  "rows": [
+    [16.96, 2.0e-14],
+    [17.10, 1.9e-14],
+    [17.28, 1.8e-14],
+    [17.46, 1.7e-14],
+    [17.65, 1.7e-14],
+    [17.85, 1.8e-14]
+  ]
+}

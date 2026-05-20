@@ -1,5 +1,20 @@
-"""BICEP/Keck 18 and Planck PR4 B-mode bandpower loaders."""
-from ccdr.data.loaders._stub import stub
+"""BICEP/Keck 18 and Planck PR4 B-mode bandpower loaders.
 
-load_bk18_bandpowers = stub("bk18", "BICEP/Keck 18 bandpowers")
-load_planck_pr4_bmode = stub("planck_pr4_bmode", "Planck PR4 B-mode")
+Payload contract for `bmode_template_fit`: iterable of
+(ell, C_BB_uK2, sigma_uK2) triples.
+"""
+from ccdr.data.loaders._common import read_cached_json
+
+
+def _load_bandpowers(name):
+    data, sha = read_cached_json(name)
+    payload = [tuple(row) for row in data["rows"]]
+    return payload, sha
+
+
+def load_bk18_bandpowers():
+    return _load_bandpowers("bk18")
+
+
+def load_planck_pr4_bmode():
+    return _load_bandpowers("planck_pr4_bmode")

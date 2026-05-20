@@ -1,0 +1,8 @@
+{
+  "source": "KamLAND-Zen 0νββ effective Majorana mass limit",
+  "url": "Abe et al. (KamLAND-Zen) 2024",
+  "columns": ["observable", "value_ev", "sigma_ev"],
+  "rows": [
+    ["m_bb_upper_limit_ev", 0.060, 0.020]
+  ]
+}
