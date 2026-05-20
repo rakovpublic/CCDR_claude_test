@@ -1,0 +1,753 @@
+"""
+CCDR/Synthesis v7.7 — Reshaped Prediction List (R10-PR1)
+==========================================================
+
+This is the structured single source of truth for the reshaped prediction list.
+All other artifacts (markdown, docx, test stubs) are generated from this.
+
+Each prediction is structured to satisfy the 5 standards:
+  S1 mechanism_derivation: how the value is forced by the cascade mechanism
+  S2 pre_registration:     timestamp and freezing requirements
+  S3 discriminator:         what makes this CCDR-specific vs ΛCDM/alternatives
+  S4 quantitative_form:    explicit value or function with uncertainty
+  S5 pass_fail_criterion:  unambiguous test with no recovery path
+
+Data availability buckets:
+  NOW              public data exists today
+  2027             needs DESI DR3 / Euclid Q3 release
+  2029             needs LSST Y1 / LiteBIRD first-light
+  2030+            needs CMB-S4 / tonne-scale DD peak resolution
+  SECTION_21       needs simplicial-overlap construction + numerical execution
+  THEORY_ONLY      pure framework-internal consistency calculation
+"""
+
+PREDICTIONS = [
+
+# ============================================================================
+# TIER A — KEEP: clean, programmable, testable on current public data
+# ============================================================================
+
+{
+    "id": "P-A01",
+    "legacy_id": "P3",
+    "name": "Filament orientational correlation length",
+    "tier": "A",
+    "data_bucket": "NOW",
+    "data_sources": [
+        "Cosmic-web filament catalogues (DisPerSE, Bisous, T-ReX) on SDSS DR16, DESI DR2",
+    ],
+    "mechanism": "Grain-boundary phonon scattering at cosmic-web filaments produces angular correlations on scale r_texture > r* (BAO scale).",
+    "frozen_parameters_required": ["r_texture", "amplitude_A"],
+    "quantitative_form": "C_fila(r) = A · exp(-r / r_texture), with r_texture predicted from cascade-stage k_filament: r_texture = r*(z=z_fil) × χ_geom",
+    "discriminator": "ΛCDM predicts decorrelation at the BAO scale r* with no excess at larger r; CCDR predicts excess at r_texture > r*. Density-stratified version (CL4 component) further discriminates: same-sign excess in high-density and low-density subsets predicted.",
+    "pass_fail": "Pre-register predicted r_texture value (e.g. r_texture = 933 ± 200 Mpc/h) and amplitude A. Test: measured r_texture inside predicted band → PASS; outside → FAIL. No version-tagged recovery allowed.",
+    "derivation_complexity": "low",
+    "derivation_recipe": [
+        "Fix χ_geom and cascade-stage assignment from frozen framework parameters",
+        "Compute r* at filament-formation epoch (z ~ 0.5) via CAMB",
+        "Compute predicted r_texture and A",
+        "Pre-register; no fitting to data permitted",
+    ],
+    "dependencies": [],
+},
+
+{
+    "id": "P-A02",
+    "legacy_id": "P10/P25/P27/P31",
+    "name": "Dark-matter cascade mass tower",
+    "tier": "A",
+    "data_bucket": "NOW partial / 2030+ decisive",
+    "data_sources": [
+        "XENONnT-2025 90% CL exclusion (PUBLIC)",
+        "LZ 2024 exclusion (PUBLIC)",
+        "PandaX-4T 2024 exclusion (PUBLIC)",
+        "DARWIN/XLZD design exposures (FUTURE: 2030+)",
+    ],
+    "mechanism": "Cascade residues from N→N-1→...→4 dimensional reduction form a geometric mass tower {m_k = m_0 · ρ^k} where ρ is the suppression ratio between adjacent cascade stages.",
+    "frozen_parameters_required": ["m_0", "ρ (suppression ratio)", "N (total stages)"],
+    "quantitative_form": "Mass-tower: m_k = m_0 · ρ^k for k = 1..N-4. Predicted mass list with uncertainty bands committed before any peak-resolution data is examined.",
+    "discriminator": "No competing DM framework predicts a *list of specific masses with geometric ratios*. WIMP, axion, sterile-ν predict either single mass or continuum.",
+    "pass_fail": "(NOW partial:) current exclusion curves should NOT exclude any predicted mass at >95% CL; if they do, the corresponding cascade-stage assignment fails. (2030+:) tonne-scale peak resolution finds peaks at predicted masses → PASS; finds peaks at non-predicted masses → FAIL.",
+    "derivation_complexity": "low",
+    "derivation_recipe": [
+        "Derive m_0 from EW crystallisation scale ≈ v_EW",
+        "Derive ρ from cascade-stage ratio (geometric, set by χ_k spacing)",
+        "Derive N from §4.5 dimension-origin prior (N = 6, 8, 11 candidates)",
+        "Output: list [(m_k, σ_m_k)] with full provenance",
+    ],
+    "dependencies": ["frozen_N", "frozen_ρ"],
+    "is_hard_core": True,
+},
+
+{
+    "id": "P-A03",
+    "legacy_id": "§6.1 high-z a₀",
+    "name": "High-redshift Milgrom acceleration transition to cH₀",
+    "tier": "A",
+    "data_bucket": "NOW",
+    "data_sources": [
+        "KMOS3D (PUBLIC) rotation curves at z ∈ [0.6, 2.6]",
+        "MaNGA DR17 (PUBLIC) z < 0.15 control",
+        "DESI BGS rotation curves z < 0.5 (PUBLIC)",
+        "SDSS-IV / APOGEE-2 (PUBLIC) z < 0.4 stellar kinematics",
+    ],
+    "mechanism": "Local a₀ → Milgrom from grain-boundary phonon scattering should evolve: at higher z the cosmic horizon scale cH₀(z) is larger and the cascade-residue phonon spectrum samples higher modes, shifting effective a₀ → cH₀(z) at z ≳ 0.3.",
+    "frozen_parameters_required": ["a₀(z=0)", "transition redshift z_*"],
+    "quantitative_form": "a₀(z) = a₀(0) · [1 + α_a (z - z_*)] for z > z_*; predicted z_* = 0.3 and α_a derivable from cascade ν",
+    "discriminator": "ΛCDM has no a₀ at all (Newtonian limit). Standard MOND has constant a₀. Only CCDR (and a few specific extensions of MOND) predicts z-evolution.",
+    "pass_fail": "Stacked KMOS3D + DESI rotation curves at z = 0.6–1.2 give measured a₀(z). PASS if measured a₀ is within ±1σ of predicted; FAIL if outside ±3σ.",
+    "derivation_complexity": "low-medium",
+    "derivation_recipe": [
+        "Compute Milgrom a₀(z=0) from grain-boundary phonon density × ν",
+        "Predict z_* from cosmic horizon evolution",
+        "Predict α_a from cascade-residue mode spectrum",
+        "Output: a₀(z) function, pre-registered",
+    ],
+    "dependencies": [],
+},
+
+{
+    "id": "P-A04",
+    "legacy_id": "P22",
+    "name": "AS-EPRL stage-by-stage parameter agreement",
+    "tier": "A",
+    "data_bucket": "THEORY_ONLY",
+    "data_sources": ["No empirical data — pure theory consistency"],
+    "mechanism": "Asymptotic Safety (continuum) and EPRL spin-foam (combinatorial) computations of cascade-stage parameters γ_AS, γ_EPRL must agree at each stage.",
+    "frozen_parameters_required": [],
+    "quantitative_form": "|γ_AS(k) - γ_EPRL(k)| / γ_AS(k) < ε(N₄) for each cascade stage k, with ε → 0 as N₄ → ∞",
+    "discriminator": "Internal consistency of the framework. No alternative framework predicts this agreement.",
+    "pass_fail": "Compute γ_AS via Bahr-Steinhaus stage-by-stage RG. Compute γ_EPRL via spin-foam amplitude. PASS if agreement within 9% (current toy bound); FAIL if disagreement persists at higher N₄.",
+    "derivation_complexity": "high (theory computation, no data)",
+    "derivation_recipe": [
+        "Run continuum AS β-functions at each cascade-stage cutoff",
+        "Run EPRL spin-foam amplitudes at matching combinatorial complexity",
+        "Compare γ values stage by stage",
+    ],
+    "dependencies": [],
+},
+
+{
+    "id": "P-A05",
+    "legacy_id": "P32 (sharpened)",
+    "name": "BH ringdown QNM deviation from Kerr",
+    "tier": "A",
+    "data_bucket": "NOW",
+    "data_sources": [
+        "GWOSC GWTC-3 high-SNR ringdown events (PUBLIC): GW190521, GW150914, GW250114",
+        "EHT M87* / Sgr A* image data (PUBLIC)",
+    ],
+    "mechanism": "At BH formation, the horizon is a region of χ_4 → 1 boundary; the cascade leaves a residual deformation of the no-hair structure proportional to (χ_4 - 1)·spin.",
+    "frozen_parameters_required": ["δω_ring (predicted QNM frequency deviation)"],
+    "quantitative_form": "δω_220 / ω_220^Kerr = ε_CCDR · (a_spin) · F(M, η); ε_CCDR predicted from cascade boundary-deformation coefficient",
+    "discriminator": "Kerr no-hair predicts δω = 0 exactly. ECOs, fuzzballs, modified gravity predict different functional forms.",
+    "pass_fail": "Stack ringdown of all GWTC-3 SNR > 8 events; measure δω_220 population mean. PASS within ±1σ of CCDR; FAIL outside ±3σ. Current upper bound from GW250114 must not be violated.",
+    "derivation_complexity": "medium",
+    "derivation_recipe": [
+        "Compute ε_CCDR from boundary-deformation spectrum (P42)",
+        "Compute spin and mass dependence F(M, η) from cascade residue at horizon",
+        "Pre-register δω(M, η) functional form",
+    ],
+    "dependencies": ["P-A11 (P42 — same mechanism)"],
+},
+
+{
+    "id": "P-A06",
+    "legacy_id": "P35",
+    "name": "Sub-BAO geometric harmonics in matter P(k)",
+    "tier": "A",
+    "data_bucket": "NOW",
+    "data_sources": [
+        "BOSS DR16 Lyα 1D P_F(k) (PUBLIC)",
+        "eBOSS DR17 Lyα (PUBLIC)",
+        "DESI DR2 LSS (PUBLIC)",
+    ],
+    "mechanism": "Cascade-stage spacing produces geometric harmonics in the matter power spectrum at sub-BAO scales (k > k_BAO) with k ratios determined by cascade-stage suppression ρ.",
+    "frozen_parameters_required": ["k_first_harmonic", "ρ"],
+    "quantitative_form": "P(k_n) / P_{ΛCDM}(k_n) = 1 + A_n cos(2π k_n / k_*) for k_n = k_* · ρ^n; A_n, k_*, ρ predicted",
+    "discriminator": "ΛCDM has smooth sub-BAO P(k). CCDR predicts specific geometric peaks. Other frameworks (interacting DM, etc.) predict different peak structures.",
+    "pass_fail": "Measure 1D P_F(k) deviation from smooth ΛCDM at k = k_1, k_2, k_3 (predicted positions). PASS within ±1σ of predicted A_n at each; FAIL if peaks absent at >3σ.",
+    "derivation_complexity": "medium",
+    "derivation_recipe": [
+        "Compute k_* from cascade-stage transition scale",
+        "Compute ρ from frozen geometric ratio",
+        "Predict (k_n, A_n) sequence",
+        "Pre-register and test against Lyα data",
+    ],
+    "dependencies": ["frozen_ρ"],
+},
+
+{
+    "id": "P-A07",
+    "legacy_id": "P38",
+    "name": "Void-wall transverse kurtosis k₄ > 4",
+    "tier": "A",
+    "data_bucket": "NOW",
+    "data_sources": [
+        "VAST VoidFinder public catalogue (PUBLIC)",
+        "REVOLVER / VIDE void catalogues on SDSS/DESI (PUBLIC)",
+        "ZOBOV / DESI Y3 void catalogue (when released)",
+    ],
+    "mechanism": "Grain-boundary phonon scattering at void walls produces non-Gaussian density profile tails with predicted transverse kurtosis k₄ > 4 (above Gaussian k₄ = 3).",
+    "frozen_parameters_required": ["k₄_predicted"],
+    "quantitative_form": "k₄(transverse radial-drift) = 3 + δk₄, with δk₄ ≈ 1.0–1.5 predicted from grain-boundary scattering amplitude × ν",
+    "discriminator": "ΛCDM predicts k₄ = 3 (Gaussian) for void walls; CCDR predicts k₄ > 4. Alternative MOND microfoundings give k₄ = 3.",
+    "pass_fail": "Stack void walls in catalogue; compute k₄ of transverse radial-drift distribution. PASS if k₄ > 4 at >2σ; FAIL if k₄ ≤ 3.5 at >2σ.",
+    "derivation_complexity": "low",
+    "derivation_recipe": [
+        "Compute grain-boundary scattering amplitude from ν and grain-size r_grain",
+        "Predict δk₄ from scattering kernel convolution",
+        "Pre-register predicted k₄ value",
+    ],
+    "dependencies": [],
+},
+
+{
+    "id": "P-A08",
+    "legacy_id": "P39 (DR2-capable form)",
+    "name": "Secular w(z) drift from bulk RVM cooling",
+    "tier": "A",
+    "data_bucket": "NOW partial / 2027 decisive",
+    "data_sources": [
+        "DESI DR2 BAO (PUBLIC)",
+        "Pantheon+ Type Ia SNe (PUBLIC)",
+        "DES Y6 SNe (PUBLIC)",
+        "DESI DR3 (2027), Euclid Q3, LSST Y1 (decisive)",
+    ],
+    "mechanism": "Projected bulk vacuum density C₀(t) drifts at rate ∝ ν_bulk, inducing time-dependent effective ρ_Λ in our 3+1D slice.",
+    "frozen_parameters_required": ["ν_bulk", "β (cooling-profile exponent)"],
+    "quantitative_form": "w(z) - (-1) = -ν_bulk · (1+z)^β; ν_bulk and β must be frozen before any w(z) fit",
+    "discriminator": "ΛCDM: flat w = -1. Quintessence: w(z) increases with z (opposite sign). CCDR-evaporation: w(z) decreases with z. Distinguishable from both.",
+    "pass_fail": "(NOW:) Joint DESI DR2 + Pantheon+ w(z) reconstruction must show -ν_bulk · (1+z)^β within ±2σ. (2027:) DESI DR3 + Euclid Q3 decisive at ±0.5σ level.",
+    "derivation_complexity": "medium",
+    "derivation_recipe": [
+        "Derive ν_bulk from bulk-RVM coefficient — currently a free parameter; must be committed or have a prior",
+        "Derive β from bulk-geometry cooling-profile structure",
+        "Output: w(z) prediction with bands",
+        "Note: framework should either freeze ν_bulk now or pre-register a prior; otherwise this collapses into fitting",
+    ],
+    "dependencies": ["frozen_ν_bulk"],
+},
+
+{
+    "id": "P-A09",
+    "legacy_id": "P40 (ℓ-shape form)",
+    "name": "Bulk-Weyl CMB B-mode component with distinct ℓ-shape",
+    "tier": "A",
+    "data_bucket": "NOW upper-limit / 2029 detection",
+    "data_sources": [
+        "BICEP/Keck BK18 bandpowers (PUBLIC)",
+        "Planck PR4 B-mode (PUBLIC)",
+        "LiteBIRD first-light 2029 (decisive)",
+        "CMB-S4 (2030+)",
+    ],
+    "mechanism": "Bulk Weyl-squared term W_5 sources tensor B-modes at the 5→4 reduction time, leaving an imprint at large angular scales with ℓ-shape distinct from inflationary tensor B-modes.",
+    "frozen_parameters_required": ["ℓ-shape function f_BW(ℓ)", "amplitude (c_W · C_5²/G_5)"],
+    "quantitative_form": "C_ℓ^BB(total) = C_ℓ^BB(inflation) + A_BW · f_BW(ℓ); f_BW(ℓ) predicted from bulk-Weyl mode structure at trigger; A_BW has theoretical uncertainty O(1)",
+    "discriminator": "Inflationary B-mode: reionization bump at ℓ ≈ 5, recombination bump at ℓ ≈ 80. Bulk-Weyl B-mode: distinct ℓ-shape from horizon-entry at trigger. Shapes are orthogonal templates.",
+    "pass_fail": "(NOW:) BK18 bounds A_BW · ⟨f_BW(ℓ_BK)⟩ < 10⁻³ in Planck units → constrains framework's bulk geometry. (2029:) LiteBIRD detection at predicted ℓ-shape → PASS; absence at ℓ-shape sensitivity → constrains but doesn't falsify (OP15).",
+    "derivation_complexity": "medium-high",
+    "derivation_recipe": [
+        "Derive f_BW(ℓ) from bulk Weyl mode at 5→4 reduction surface",
+        "Derive A_BW lower bound from cascade trigger amplitude",
+        "Pre-register ℓ-shape template (template = the prediction; amplitude has uncertainty)",
+    ],
+    "dependencies": [],
+},
+
+{
+    "id": "P-A10",
+    "legacy_id": "P41 (cross-channel pattern)",
+    "name": "b→sμμ cross-channel sign-coherence with zero C₁₀ shift",
+    "tier": "A",
+    "data_bucket": "NOW",
+    "data_sources": [
+        "LHCb full Run 1+2+3 b→sμμ angular results (PUBLIC, arXiv:2512.18053 and subsequent)",
+        "Belle II semi-leptonic B decays (PUBLIC)",
+        "ATLAS+CMS B_s → μμ branching (PUBLIC)",
+    ],
+    "mechanism": "TeV-scale cascade-residue lattice/grain-boundary remnant produces a real, vector-like, CP-even shift in C_9^eff with zero shift in C_10, scalar, tensor, or CP-asymmetric coefficients.",
+    "frozen_parameters_required": ["sign and approximate magnitude of δC_9"],
+    "quantitative_form": "δC_9^eff > 0 (real, vector, CP-even), δC_10 = 0, δC_S = δC_T = δC_9' = 0; specific same-sign pattern across R_K, R_K*, B_s→φμμ, P_5' in adjacent q² bins",
+    "discriminator": "Z' explanations: typically affect C_10 too. Leptoquark: scalar/tensor pieces. CCDR-specific: vector real CP-even only. Cross-channel sign coherence with zero in predicted-zero observables is the signature.",
+    "pass_fail": "Multi-channel global fit. PASS if (δC_9 > 0) ∧ (|δC_10|/|δC_9| < 0.2) ∧ (cross-channel sign coherence > 90%); FAIL if C_10 shift comparable to C_9, or scalar/tensor pieces non-zero at >3σ.",
+    "derivation_complexity": "low",
+    "derivation_recipe": [
+        "Specify which Wilson coefficients should be non-zero in the cascade-residue model",
+        "Specify cross-channel sign relations",
+        "Compute χ² of CCDR pattern vs alternatives on public LHCb data",
+    ],
+    "dependencies": [],
+},
+
+{
+    "id": "P-A11",
+    "legacy_id": "P42",
+    "name": "Boundary-deformation residual spectrum",
+    "tier": "A",
+    "data_bucket": "NOW",
+    "data_sources": [
+        "EHT M87* 2017–2021 (PUBLIC)",
+        "EHT Sgr A* 2022 (PUBLIC)",
+        "GWOSC GWTC-3 ringdown (PUBLIC)",
+    ],
+    "mechanism": "Compactification of higher-D bulk into 3+1D slice leaves boundary-deformation residuals scaling with spin, tidal field, accretion environment, Weyl curvature, and (χ_k - 1).",
+    "frozen_parameters_required": ["scaling exponents (α_J, α_T, α_W) for spin, tide, Weyl"],
+    "quantitative_form": "|ε_ℓm(k)| = c_dim · J^{α_J} · T^{α_T} · W^{α_W} · (χ_k - 1)^{α_χ}; specific scaling exponents predicted",
+    "discriminator": "Kerr / GR: ε = 0. ECOs / fuzzballs / boson stars: specific stochastic spectra. CCDR: ε scales with environment-correlated combinations.",
+    "pass_fail": "After subtracting known astrophysical effects, residual ε_ℓm should (a) vanish in clean Schwarzschild ≈ 0, (b) scale predictably with spin. PASS if scaling consistent with predicted exponents; FAIL if scaling random or wrong direction.",
+    "derivation_complexity": "medium",
+    "derivation_recipe": [
+        "Derive scaling exponents from cascade boundary-deformation theory",
+        "Compute predicted residual spectrum",
+        "Compare to EHT shadow circularity + GW ringdown population statistics",
+    ],
+    "dependencies": ["P-A05"],
+},
+
+{
+    "id": "P-A12",
+    "legacy_id": "CL4",
+    "name": "Joint density-stratification of P3 and P38 same-sign",
+    "tier": "A",
+    "data_bucket": "NOW",
+    "data_sources": [
+        "Cosmic-web filament + VAST void catalogues on SAME survey (DESI DR2)",
+    ],
+    "mechanism": "Both P3 (filament texture) and P38 (void-wall kurtosis) derive from grain-boundary scattering; their density-stratified signatures must share sign.",
+    "frozen_parameters_required": [],
+    "quantitative_form": "sign(Δr_texture^high − Δr_texture^low) · sign(Δk_4^high − Δk_4^low) > 0",
+    "discriminator": "If P3 and P38 came from different mechanisms, their density splits could have opposite signs. Same-sign requires shared underlying mechanism.",
+    "pass_fail": "Compute density-quantile splits independently on filament and void catalogues. PASS if same sign at >2σ each; FAIL if opposite sign at >2σ.",
+    "derivation_complexity": "low",
+    "derivation_recipe": [
+        "Standard density-quantile stratification on each catalogue",
+        "Sign test on combined statistic",
+    ],
+    "dependencies": ["P-A01", "P-A07"],
+},
+
+{
+    "id": "P-A13",
+    "legacy_id": "BSM3",
+    "name": "Dark photon kinetic mixing ε ~ ν",
+    "tier": "A",
+    "data_bucket": "NOW",
+    "data_sources": [
+        "BaBar, LHCb dark-photon searches (PUBLIC)",
+        "NA64, FASER (PUBLIC)",
+        "HPS / APEX upper bounds (PUBLIC)",
+    ],
+    "mechanism": "If optical-sector U(1) exists in cascade, kinetic mixing with SM photon has ε ~ ν.",
+    "frozen_parameters_required": ["ν"],
+    "quantitative_form": "ε_dark = c_mix · ν, with c_mix predicted O(1); for ν = 5×10⁻³, ε ≈ 10⁻³ in mass-range ~ 0.1–10 GeV",
+    "discriminator": "Standard dark photon: ε is free. CCDR: ε is tied to ν, which is independently measured.",
+    "pass_fail": "If experimental upper limits on ε for any mass in predicted range exclude ε ~ ν, that combination is falsified. If ε at predicted value detected, PASS.",
+    "derivation_complexity": "low",
+    "derivation_recipe": [
+        "Use frozen ν",
+        "Compute c_mix from cascade U(1) sector",
+        "Compare to public dark-photon exclusion plots",
+    ],
+    "dependencies": ["frozen_ν"],
+},
+
+{
+    "id": "P-A14",
+    "legacy_id": "BSM5",
+    "name": "Cosmic-string tension Gμ ~ 10⁻⁶ in PTA window",
+    "tier": "A",
+    "data_bucket": "NOW",
+    "data_sources": [
+        "NANOGrav 15-yr data set (PUBLIC)",
+        "EPTA + PPTA combined data (PUBLIC)",
+    ],
+    "mechanism": "Edge-dislocation line defects of spacetime lattice yield cosmic strings with predicted tension μ ~ 10⁻⁶ M_Pl² / α.",
+    "frozen_parameters_required": ["α (cascade fine-structure-like coupling)"],
+    "quantitative_form": "Gμ ~ 10⁻⁶ ± half a decade",
+    "discriminator": "ΛCDM has no preferred string tension. CCDR predicts a value tied to cascade structure.",
+    "pass_fail": "NANOGrav PTA spectrum is consistent with Gμ in [10⁻⁷, 3·10⁻⁶] from public constraints. PASS if any cosmic-string fit within band; FAIL if PTA spectrum cleanly fit by SMBHB only with strings disfavoured at >3σ in predicted band.",
+    "derivation_complexity": "low",
+    "derivation_recipe": [
+        "Standard cosmic-string h_c(f) template",
+        "Cross-fit against NANOGrav 15-yr posterior",
+    ],
+    "dependencies": [],
+},
+
+{
+    "id": "P-A15",
+    "legacy_id": "BSM6",
+    "name": "CDT simplex chirality count = δ_CP",
+    "tier": "A",
+    "data_bucket": "THEORY_ONLY",
+    "data_sources": ["CDT simulation code (CDT-plusplus, PUBLIC)"],
+    "mechanism": "Simplicial orientation asymmetry in CDT C-phase yields CP phase δ via combinatorial count.",
+    "frozen_parameters_required": [],
+    "quantitative_form": "δ_CP = arctan(N_+ - N_-) / (N_+ + N_-) where N_± are positively/negatively oriented 4-simplices, computed from CDT ensemble",
+    "discriminator": "SM has δ_CP as free parameter. CCDR computes it from CDT geometry.",
+    "pass_fail": "Run CDT-plusplus ensemble; count chiral asymmetry. PASS if computed δ_CP matches PDG (1.144 ± 0.027 rad) within 20%; FAIL if outside ±50%.",
+    "derivation_complexity": "low-medium (CDT-plusplus runs)",
+    "derivation_recipe": [
+        "Build CDT-plusplus, generate C-phase ensemble at N_4 ~ 10^4",
+        "Count chirality asymmetry per configuration",
+        "Average over Markov chain",
+    ],
+    "dependencies": [],
+},
+
+{
+    "id": "P-A16",
+    "legacy_id": "P24",
+    "name": "DA/O upper bound N ≤ 11 on cascade depth",
+    "tier": "A",
+    "data_bucket": "NOW",
+    "data_sources": ["Theoretical bound from division-algebra framework + observational cosmology"],
+    "mechanism": "C ⊗ H ⊗ O division-algebra structure constrains total cascade stage count.",
+    "frozen_parameters_required": [],
+    "quantitative_form": "N ≤ 11",
+    "discriminator": "Most frameworks have no constraint on cascade depth. CCDR predicts N ≤ 11.",
+    "pass_fail": "PASS if all empirical N inference from cascade structure ≤ 11; FAIL if any inference requires N > 11.",
+    "derivation_complexity": "theory (no data)",
+    "derivation_recipe": ["Verify C ⊗ H ⊗ O dimension count enforces N ≤ 11"],
+    "dependencies": [],
+},
+
+{
+    "id": "P-A17",
+    "legacy_id": "BSM2",
+    "name": "Axion mass in 10⁻⁵–10⁻² eV window",
+    "tier": "A",
+    "data_bucket": "NOW",
+    "data_sources": [
+        "ADMX results (PUBLIC)",
+        "HAYSTAC (PUBLIC)",
+        "CAPP-PACE, ABRACADABRA (PUBLIC)",
+        "QUAX, CASPEr (PUBLIC)",
+    ],
+    "mechanism": "PQ-scale crystallisation Goldstone with mass set by QCD instanton potential.",
+    "frozen_parameters_required": ["PQ scale f_a"],
+    "quantitative_form": "m_a ∈ [10⁻⁵, 10⁻²] eV with strongest probability near 10⁻⁴–10⁻³ eV",
+    "discriminator": "Other DM frameworks predict either no axion or different mass range. CCDR-AQN: specific window tied to QCD-stage crystallisation.",
+    "pass_fail": "PASS if axion detected in window with predicted g_aγγ coupling; FAIL if window comprehensively excluded by ADMX + HAYSTAC + future experiments.",
+    "derivation_complexity": "low",
+    "derivation_recipe": ["Compute f_a from QCD-stage crystallisation", "Predict m_a = m_π · f_π / f_a"],
+    "dependencies": [],
+},
+
+{
+    "id": "P-A18",
+    "legacy_id": "BSM4",
+    "name": "Right-handed neutrino at 10⁹–10¹⁵ GeV",
+    "tier": "A",
+    "data_bucket": "NOW (indirect) / FUTURE (direct)",
+    "data_sources": [
+        "KATRIN m_ν direct (PUBLIC)",
+        "0νββ searches: KamLAND-Zen, LEGEND, CUORE (PUBLIC)",
+        "JUNO, DUNE flux observations",
+    ],
+    "mechanism": "Crystal-boundary mode with Majorana mass on de Sitter / BH horizons.",
+    "frozen_parameters_required": ["M_R"],
+    "quantitative_form": "M_R ∈ [10⁹, 10¹⁵] GeV with see-saw implication m_ν · M_R ~ v_EW²",
+    "discriminator": "SM: no νR. Type-I see-saw: M_R free. CCDR: M_R tied to cascade-stage boundary energy.",
+    "pass_fail": "PASS if 0νββ rate consistent with predicted M_R; FAIL if 0νββ excluded at level requiring M_R outside predicted range.",
+    "derivation_complexity": "medium",
+    "derivation_recipe": ["Compute crystal-boundary energy from cascade structure", "Predict M_R, hence m_ν via see-saw"],
+    "dependencies": [],
+},
+
+{
+    "id": "P-A19",
+    "legacy_id": "CL5+CL6+CL7",
+    "name": "Joint multi-channel consistency (P39+P40+P41+P42)",
+    "tier": "A",
+    "data_bucket": "NOW partial / 2029 decisive",
+    "data_sources": ["All sources for component predictions"],
+    "mechanism": "All four predictions arise from same lattice/bulk-Weyl/cascade structure. Joint posterior in (ν_bulk, c_W, lattice scale, boundary-deformation amplitude) space must be self-consistent.",
+    "frozen_parameters_required": ["all component parameters"],
+    "quantitative_form": "Joint posterior support region must be non-empty in (ν_bulk, c_W × C_5²/G_5, δC_9, ε_ℓm) space.",
+    "discriminator": "If P39 + P40 + P41 + P42 came from independent mechanisms, joint constraint would be a coincidence. Same mechanism predicts overlapping support.",
+    "pass_fail": "Compute joint posterior. PASS if 68% support region non-empty AND consistent across independent measurements; FAIL if joint posterior is empty (mutual inconsistency).",
+    "derivation_complexity": "medium",
+    "derivation_recipe": ["Combine per-channel likelihoods", "Compute joint posterior", "Check overlap"],
+    "dependencies": ["P-A08", "P-A09", "P-A10", "P-A11"],
+},
+
+# ============================================================================
+# TIER B — REPAIR: need parameter commit before becoming testable
+# ============================================================================
+
+{
+    "id": "P-B01",
+    "legacy_id": "P1",
+    "name": "RVM BAO scale shift δr*/r* = ν/2",
+    "tier": "B",
+    "data_bucket": "NOW partial / 2027 decisive",
+    "data_sources": ["DESI DR2 (PUBLIC)", "DESI DR3 (2027)"],
+    "mechanism": "RVM running of vacuum density shifts r* by ν/2 at matter-radiation equality.",
+    "frozen_parameters_required": ["ν"],
+    "quantitative_form": "δr*/r* = ν/2",
+    "discriminator": "ΛCDM: δr* = 0. RVM-class models: predict ν/2 shift.",
+    "pass_fail": "Once ν frozen, measure r* shift in DESI DR2/DR3. PASS within ±1σ; FAIL outside ±3σ.",
+    "derivation_complexity": "low",
+    "derivation_recipe": ["Commit ν", "Compute δr*/r*", "Compare to DESI"],
+    "repair_required": "Resolve OP11 (ν 500× discrepancy) by either committing to joint or standalone extractor with documented justification, OR registering ν as uncertain parameter with prior",
+    "dependencies": ["frozen_ν"],
+},
+
+{
+    "id": "P-B02",
+    "legacy_id": "P2",
+    "name": "Filament non-Gaussian bispectrum f_NL^grain",
+    "tier": "B",
+    "data_bucket": "NOW partial / 2030 decisive (Euclid 6-yr)",
+    "data_sources": ["Planck NPIPE bispectrum (PUBLIC, partial sensitivity)", "Euclid 6-yr bispectrum (FUTURE)"],
+    "mechanism": "Grain-boundary scattering imprints scale-dependent f_NL on filament network.",
+    "frozen_parameters_required": ["r_grain"],
+    "quantitative_form": "f_NL^grain ~ (r*/r_grain)² × 10⁻²",
+    "discriminator": "ΛCDM: f_NL_local ≈ 0. CCDR: scale-dependent shape on filaments.",
+    "pass_fail": "PASS if f_NL_grain measurement within ±1σ of predicted; FAIL outside ±3σ.",
+    "derivation_complexity": "low",
+    "derivation_recipe": ["Commit r_grain", "Compute f_NL^grain", "Compare to Planck/Euclid"],
+    "repair_required": "Commit r_grain (grain size scale) as frozen parameter",
+    "dependencies": ["frozen_r_grain"],
+},
+
+{
+    "id": "P-B03",
+    "legacy_id": "P5",
+    "name": "QGP viscosity enhancement at phase boundaries",
+    "tier": "B",
+    "data_bucket": "NOW",
+    "data_sources": ["ALICE / CMS QGP η/s public results"],
+    "mechanism": "Phase-boundary scattering enhances η/s above KSS bound by specific factor.",
+    "frozen_parameters_required": ["enhancement factor c_η/s"],
+    "quantitative_form": "η/s = (1/4π) · (1 + c_η/s · ν); c_η/s predicted",
+    "discriminator": "AdS/CFT: η/s = 1/4π. CCDR: enhanced by c_η/s · ν.",
+    "pass_fail": "PASS if measured enhancement matches predicted within ±1σ.",
+    "derivation_complexity": "medium",
+    "derivation_recipe": ["Compute c_η/s from phase-boundary scattering", "Use frozen ν", "Compare to ALICE/CMS"],
+    "repair_required": "Compute c_η/s from cascade phase-boundary mechanism",
+    "dependencies": ["frozen_ν"],
+},
+
+{
+    "id": "P-B04",
+    "legacy_id": "P8b",
+    "name": "PTA GW spectral index shift δn_GW ~ ν/3",
+    "tier": "B",
+    "data_bucket": "NOW",
+    "data_sources": ["NANOGrav 15-yr (PUBLIC)"],
+    "mechanism": "Cascade-residue stochastic GW background contributes to PTA signal with specific spectral index shift.",
+    "frozen_parameters_required": ["ν"],
+    "quantitative_form": "δn_GW = -ν/3 (relative to standard SMBHB α = -2/3)",
+    "discriminator": "SMBHB-only: n_GW ≈ -2/3. CCDR: small shift to -2/3 - ν/3.",
+    "pass_fail": "Measure spectral index in NANOGrav 15-yr posterior. PASS if shift matches; FAIL if opposite sign or magnitude > 3× predicted.",
+    "derivation_complexity": "low",
+    "derivation_recipe": ["Commit ν", "Compute δn_GW", "Compare to NG15 spectral fit"],
+    "repair_required": "Commit ν",
+    "dependencies": ["frozen_ν"],
+},
+
+{
+    "id": "P-B05",
+    "legacy_id": "P8c (CL2)",
+    "name": "PTA × cosmic-web κ correlation amplitude",
+    "tier": "B",
+    "data_bucket": "NOW",
+    "data_sources": ["NANOGrav 15-yr × Planck PR4 lensing (PUBLIC)", "ACT DR6 lensing (PUBLIC)"],
+    "mechanism": "Reducing-volume effect at pulsar positions correlates PTA residuals with local lensing convergence κ.",
+    "frozen_parameters_required": ["expected correlation amplitude r_predicted"],
+    "quantitative_form": "Pearson correlation r(WRMS, κ) = r_predicted; r_predicted ≈ ?? (NEEDS COMMIT)",
+    "discriminator": "Null hypothesis: r = 0. CCDR predicts specific r value.",
+    "pass_fail": "PASS if measured r within ±1σ of predicted; FAIL outside ±3σ. Currently r = +0.266 → must be in predicted band.",
+    "derivation_complexity": "medium",
+    "derivation_recipe": ["Compute expected r from reducing-volume mechanism + pulsar timing model", "Pre-register"],
+    "repair_required": "Compute predicted r amplitude (currently only sign is predicted)",
+    "dependencies": [],
+},
+
+{
+    "id": "P-B06",
+    "legacy_id": "P13/P29",
+    "name": "Frozen-vs-live DM fraction in growth fσ_8",
+    "tier": "B",
+    "data_bucket": "NOW",
+    "data_sources": ["Planck + DESI fσ_8 measurements (PUBLIC)"],
+    "mechanism": "Cascade history produces mix of frozen + live DM components affecting growth.",
+    "frozen_parameters_required": ["live fraction f_live", "exponent α"],
+    "quantitative_form": "fσ_8(z) = fσ_8^ΛCDM(z) · (1 + α · f_live · (1+z)^γ); f_live ≈ 0.154 predicted at present",
+    "discriminator": "ΛCDM: standard growth. CCDR: specific deficit at low z.",
+    "pass_fail": "Joint fit of fσ_8(z) data. PASS if α and f_live within ±1σ; FAIL outside ±3σ.",
+    "derivation_complexity": "medium",
+    "derivation_recipe": ["Derive f_live from cascade-live retention fraction", "Compute α", "Test against fσ_8"],
+    "repair_required": "Derive f_live and α from first principles rather than fitting",
+    "dependencies": [],
+},
+
+{
+    "id": "P-B07",
+    "legacy_id": "P14/P30",
+    "name": "Density-correlated Ω_DM/Ω_B in lensing convergence",
+    "tier": "B",
+    "data_bucket": "NOW",
+    "data_sources": ["ACT DR6 lensing (PUBLIC)", "DES Y3 + KiDS-1000 cosmic shear (PUBLIC)"],
+    "mechanism": "Cascade history depends on local density; ratio Ω_DM/Ω_B varies with environment, traced by κ on density-stratified subsamples.",
+    "frozen_parameters_required": ["Δκ amplitude"],
+    "quantitative_form": "Δκ(high − low density) = c_κ · ν; c_κ predicted from cascade-residue ratio",
+    "discriminator": "ΛCDM: Δκ tracks pure density. CCDR: extra component proportional to ν.",
+    "pass_fail": "Measure Δκ on density-stratified ACT DR6 patches. PASS if Δκ within predicted ±1σ; FAIL outside ±3σ.",
+    "derivation_complexity": "medium",
+    "derivation_recipe": ["Compute c_κ from cascade-residue cross-section", "Pre-register"],
+    "repair_required": "Commit Δκ amplitude prediction",
+    "dependencies": ["frozen_ν"],
+},
+
+{
+    "id": "P-B08",
+    "legacy_id": "P28",
+    "name": "Staged CMB spectral distortions μ, y from cascade stages",
+    "tier": "B",
+    "data_bucket": "NOW upper-limit / 2030+ detection",
+    "data_sources": ["FIRAS (PUBLIC)", "PIXIE (2030+)"],
+    "mechanism": "Each cascade stage at z > 10⁶ injects energy contributing to μ and y.",
+    "frozen_parameters_required": ["per-stage energy injection ΔE_k"],
+    "quantitative_form": "μ = Σ_k μ_k(ΔE_k), y = Σ_k y_k(ΔE_k); predicted total μ, y",
+    "discriminator": "ΛCDM Silk damping: standard small μ, y. CCDR: additional contribution from cascade stages.",
+    "pass_fail": "(NOW:) Predicted (μ, y) must be within FIRAS upper limits. (2030+:) PIXIE measurement of μ within ±1σ of predicted.",
+    "derivation_complexity": "medium",
+    "derivation_recipe": ["Compute ΔE_k per cascade stage at z > 10⁶", "Compute resulting μ, y", "Compare to FIRAS"],
+    "repair_required": "Compute per-stage energy injection from cascade rate",
+    "dependencies": [],
+},
+
+{
+    "id": "P-B09",
+    "legacy_id": "P33",
+    "name": "Density-correlated BAO sound horizon",
+    "tier": "B",
+    "data_bucket": "NOW partial / 2027 decisive",
+    "data_sources": ["DESI DR2 LRG (PUBLIC)", "DESI DR3 density-binned (2027)"],
+    "mechanism": "Cascade history influences r_d in a density-stratified way.",
+    "frozen_parameters_required": ["sign and magnitude of δr_d/r_d"],
+    "quantitative_form": "δr_d/r_d (high − low density) = c_r · ν · (1 + δ_8); c_r predicted",
+    "discriminator": "ΛCDM: δr_d = 0. CCDR: specific sign+magnitude.",
+    "pass_fail": "(NOW:) Round 7 sign-inversion shows -0.186 on proxy. Must be resolved by deriving predicted sign from cascade.",
+    "derivation_complexity": "medium",
+    "derivation_recipe": ["Derive sign of δr_d/r_d from cascade-history mechanism", "Resolve OP12"],
+    "repair_required": "Resolve OP12 (sign inversion). Either commit to sign or note framework is sign-agnostic.",
+    "dependencies": [],
+},
+
+{
+    "id": "P-B10",
+    "legacy_id": "P37",
+    "name": "DM phase-space drift z-score amplitude",
+    "tier": "B",
+    "data_bucket": "NOW",
+    "data_sources": ["GAIA DR3 + DESI MWS (PUBLIC)"],
+    "mechanism": "Cascade-live DM component contributes time-varying phase-space density.",
+    "frozen_parameters_required": ["z-score amplitude"],
+    "quantitative_form": "z(phase-space anomaly) ≈ ?? (NEEDS COMMIT)",
+    "discriminator": "ΛCDM: z = 0. CCDR-live: z ≠ 0.",
+    "pass_fail": "PASS if measured z matches predicted ±1σ.",
+    "derivation_complexity": "high",
+    "derivation_recipe": ["Compute predicted z from live DM density × phase-space response"],
+    "repair_required": "Compute predicted z amplitude; current 'negative direction' is not a sharp prediction",
+    "dependencies": [],
+},
+
+{
+    "id": "P-B11",
+    "legacy_id": "P21",
+    "name": "TGFT-RG condensate ν",
+    "tier": "B",
+    "data_bucket": "NOW partial / 2027 decisive",
+    "data_sources": ["DESI DR2 + Pantheon+ joint", "DESI DR3 (2027)"],
+    "mechanism": "ν is the RVM running coefficient at TGFT condensate point.",
+    "frozen_parameters_required": ["resolve OP11"],
+    "quantitative_form": "ν = ?? (REPAIR — OP11 unresolved)",
+    "discriminator": "ΛCDM: ν = 0. RVM: ν ≠ 0.",
+    "pass_fail": "Joint extractor gives 5.08×10⁻³, standalone gives 10⁻⁵, 500× disagreement.",
+    "derivation_complexity": "medium",
+    "derivation_recipe": ["Resolve methodological dependence of ν extractor"],
+    "repair_required": "Resolve OP11 (500× ν spread) — this is the central methodological problem of the framework",
+    "dependencies": [],
+},
+
+{
+    "id": "P-B12",
+    "legacy_id": "BSM1",
+    "name": "Optical-phonon DM mass + cross-section",
+    "tier": "B",
+    "data_bucket": "NOW",
+    "data_sources": ["XENONnT, LZ, PandaX (PUBLIC)"],
+    "mechanism": "Gapped scalar excitation of lattice basis with mass ~ EW crystallisation scale.",
+    "frozen_parameters_required": ["m_DM with uncertainty", "σ_DM with uncertainty"],
+    "quantitative_form": "m_DM = 100 ± ?? GeV; σ_DM ≈ ν²(ℏ/m_DM c)² ~ 10⁻⁴² m²",
+    "discriminator": "Standard WIMP: m, σ free. CCDR: tied to ν and EW crystallisation.",
+    "pass_fail": "PASS if direct detection finds peak at predicted mass with cross-section in band; FAIL if region excluded at >95% CL.",
+    "derivation_complexity": "medium",
+    "derivation_recipe": ["Derive m_DM with uncertainty from EW crystallisation calculation", "Derive σ_DM"],
+    "repair_required": "Sharpen mass and cross-section predictions",
+    "dependencies": ["frozen_ν"],
+},
+
+# ============================================================================
+# TIER C — DEMOTED to candidates (not in main P-list until repair)
+# ============================================================================
+
+# P-C entries omitted from main listing; recorded in triage_notes.md
+# Includes: P4 (CMB large-angle anomalies), P6 (DM halo fringes),
+# P9b (consistent_bound_only), P23, P26, P34, CL1 (=OP11), CL3.
+
+# ============================================================================
+# TIER D — Pending §21 numerical execution (SM-derivation subprogramme)
+# ============================================================================
+
+# All SM-D1 through SM-D10 are gated on §21 execution. They are NOT testable
+# now in terms of testing the *derivation*. The constants themselves are
+# already measured and equal to PDG values — that's not a test of the framework.
+
+# SM-D5 Koide observational consistency is the only one with a current-data
+# component. It is recorded here as a structural consistency check, not a test.
+
+{
+    "id": "P-D01",
+    "legacy_id": "SM-D5 (observational)",
+    "name": "Koide Q = 2/3 charged-lepton mass relation",
+    "tier": "D",
+    "data_bucket": "NOW (observational fact, not derivation test)",
+    "data_sources": ["PDG charged-lepton masses (PUBLIC)"],
+    "mechanism": "Empirical fact: Q = (m_e + m_μ + m_τ)/(√m_e + √m_μ + √m_τ)² ≈ 0.667 ≈ 2/3 to <0.1%. Framework asserts this is theorem of hexagonal C₆ᵥ BZ symmetry (not yet proven rigorously).",
+    "frozen_parameters_required": [],
+    "quantitative_form": "Q_measured = 0.66666 ± 0.00007 (from PDG); Q_predicted = 2/3 = 0.66667",
+    "discriminator": "SM: Q is accidental coincidence. CCDR: Q = 2/3 exactly from hex BZ.",
+    "pass_fail": "Observational: Q is measured equal to 2/3 to within 0.1% — consistency fact. NOT a test of derivation; the derivation itself requires §21 execution.",
+    "derivation_complexity": "high (theorem proof) — currently asserted, not proven",
+    "derivation_recipe": [
+        "Prove Q = 2/3 follows rigorously from C₆ᵥ symmetry on Hermitian mass matrix",
+        "(Independent of §21 lattice execution.)",
+    ],
+    "dependencies": [],
+    "note": "Test the THEOREM (does C₆ᵥ symmetry actually force Q = 2/3?) rather than the observational fact.",
+},
+
+# Note: SM-D1, SM-D2, SM-D3, SM-D4, SM-D6, SM-D7, SM-D8, SM-D9, SM-D10
+# are all gated on §21 numerical execution. They are not currently testable
+# as derivations; they are observational consistency checks (the SM constants
+# match PDG, which is trivially true). Recorded in triage_notes.md.
+]
+
+# Summary index
+def summary():
+    from collections import Counter
+    buckets = Counter(p["data_bucket"].split()[0] for p in PREDICTIONS)
+    tiers = Counter(p["tier"] for p in PREDICTIONS)
+    return {"bucket_counts": dict(buckets), "tier_counts": dict(tiers), "total": len(PREDICTIONS)}
+
+if __name__ == "__main__":
+    import json
+    print(json.dumps(summary(), indent=2))
+    for p in PREDICTIONS:
+        print(f"{p['id']:8s} [{p['tier']}] [{p['data_bucket'][:20]:20s}] {p['name'][:60]}")
