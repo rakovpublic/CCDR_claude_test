@@ -1,4 +1,13 @@
-"""LHCb b→sμμ Run-3 Wilson-coefficient fit loader."""
-from ccdr.data.loaders._stub import stub
+"""LHCb b→sμμ Run-3 loader.
 
-load_run3 = stub("lhcb_b2smumu_run3", "LHCb b→sμμ Run-3 measurements")
+Payload contract for `wilson_coefficient_fitter`: iterable of
+(observable_name, delta_C9, sigma) triples — every row is already mapped
+to its implied δC_9 contribution (SM = 0).
+"""
+from ccdr.data.loaders._common import read_cached_json
+
+
+def load_run3():
+    data, sha = read_cached_json("lhcb_b2smumu_run3")
+    payload = [(name, float(v), float(s)) for name, v, s in data["rows"]]
+    return payload, sha

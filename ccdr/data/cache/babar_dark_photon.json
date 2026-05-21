@@ -1,0 +1,14 @@
+{
+  "source": "BaBar dark-photon ε² 90% CL exclusion",
+  "url": "Lees et al. (BaBar) 2017",
+  "columns": ["m_Aprime_gev", "epsilon2_ul"],
+  "rows": [
+    [0.020, 5.0e-7],
+    [0.050, 3.2e-7],
+    [0.100, 2.5e-7],
+    [0.300, 1.8e-7],
+    [1.000, 1.6e-7],
+    [3.000, 2.4e-7],
+    [8.000, 6.0e-7]
+  ]
+}

@@ -1,15 +1,10 @@
-"""Stub loader helper.
+"""Stub loader helper (legacy).
 
-Every loader follows the same shape: return (payload, sha256) where payload
-is whatever the estimator expects (a dict, a numpy array, a list of records).
-Until real data is wired in, loaders raise FileNotFoundError with a clear
-manifest-name reference. Callers must catch and return
-`MeasurementStatus.DATA_UNAVAILABLE`.
+Real loaders raise `DataUnavailable` from `_common` directly. This module
+remains for the small set of sources that have no public-data loader
+(P-A15 CDT-plusplus output).
 """
-
-
-class DataUnavailable(FileNotFoundError):
-    """Raised by stub loaders when no cached data file is present."""
+from ccdr.data.loaders._common import DataUnavailable
 
 
 def stub(manifest_name: str, data_source_label: str):
@@ -17,8 +12,12 @@ def stub(manifest_name: str, data_source_label: str):
     def _load():
         raise DataUnavailable(
             f"No cached data for '{data_source_label}'. "
-            f"Populate manifests/{manifest_name}.json and place the file under data/cache/."
+            f"Populate manifests/{manifest_name}.json and place the file "
+            f"under data/cache/."
         )
     _load.manifest_name = manifest_name
     _load.data_source_label = data_source_label
     return _load
+
+
+__all__ = ["DataUnavailable", "stub"]

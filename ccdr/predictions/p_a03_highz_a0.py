@@ -36,9 +36,14 @@ def measure():
             data_source=_DATA_SOURCE, estimator_id=_ESTIMATOR_ID,
         )
     val, unc, n = rotation_curve_a0_extractor(curves)
+    # Convert absolute a₀ (m/s²) to the dimensionless ratio a₀(z)/a₀(0)
+    # that the derivation reports. Reference: a₀_local = 1.2e-10 m/s².
+    A0_LOCAL = 1.2e-10
+    ratio = val / A0_LOCAL
+    ratio_unc = unc / A0_LOCAL
     return MeasurementResult(
         status=MeasurementStatus.MEASURED,
-        value=val, uncertainty=unc,
+        value=ratio, uncertainty=ratio_unc,
         data_source=_DATA_SOURCE, data_sha256="|".join(shas),
         estimator_id=_ESTIMATOR_ID, n_samples=n,
     )

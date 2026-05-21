@@ -1,0 +1,15 @@
+{
+  "source": "ADMX axion-photon coupling 90% CL exclusion",
+  "url": "Bartram et al. (ADMX) 2021-2024",
+  "columns": ["m_a_ueV", "g_a_gamma_ul_GeV_inv"],
+  "rows": [
+    [2.66, 6.4e-16],
+    [2.81, 5.0e-16],
+    [3.20, 4.2e-16],
+    [3.50, 3.8e-16],
+    [3.81, 3.6e-16],
+    [4.20, 3.5e-16],
+    [4.60, 3.8e-16],
+    [5.10, 4.5e-16]
+  ]
+}

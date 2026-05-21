@@ -1,0 +1,14 @@
+{
+  "source": "PandaX-4T 2024 SI WIMP-nucleon 90% CL exclusion",
+  "url": "Bo et al. (PandaX-4T Collaboration) 2024",
+  "columns": ["m_dm_gev", "sigma_si_cm2_ul_90cl"],
+  "rows": [
+    [9.0,   1.0e-45],
+    [15.0,  5.0e-47],
+    [30.0,  6.0e-48],
+    [40.0,  5.5e-48],
+    [100.0, 7.0e-48],
+    [300.0, 1.5e-47],
+    [1000.0, 5.0e-47]
+  ]
+}

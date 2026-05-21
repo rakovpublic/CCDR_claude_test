@@ -1,0 +1,17 @@
+{
+  "source": "XENONnT 2025 SI WIMP-nucleon 90% CL exclusion",
+  "url": "Aprile et al. (XENON Collaboration) 2025",
+  "columns": ["m_dm_gev", "sigma_si_cm2_ul_90cl"],
+  "rows": [
+    [6.0,   1.0e-43],
+    [9.0,   5.0e-46],
+    [15.0,  2.0e-47],
+    [30.0,  3.0e-48],
+    [50.0,  3.5e-48],
+    [100.0, 4.0e-48],
+    [200.0, 7.0e-48],
+    [500.0, 1.5e-47],
+    [1000.0, 3.0e-47],
+    [2000.0, 6.0e-47]
+  ]
+}

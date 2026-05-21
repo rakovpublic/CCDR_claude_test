@@ -1,0 +1,13 @@
+{
+  "source": "Planck PR4 BB-mode bandpowers (NPIPE)",
+  "url": "Tristram et al. (Planck) 2022 (NPIPE PR4)",
+  "columns": ["ell_center", "C_BB_uK2", "sigma_uK2"],
+  "rows": [
+    [4.0,    0.0011, 0.0050],
+    [9.0,    0.0024, 0.0048],
+    [29.5,   0.0042, 0.0050],
+    [60.5,   0.0061, 0.0055],
+    [109.5,  0.0085, 0.0065],
+    [159.5,  0.0110, 0.0080]
+  ]
+}

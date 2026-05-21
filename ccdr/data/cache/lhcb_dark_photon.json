@@ -1,0 +1,14 @@
+{
+  "source": "LHCb prompt-like dark-photon search ε² UL",
+  "url": "Aaij et al. (LHCb) 2020",
+  "columns": ["m_Aprime_gev", "epsilon2_ul"],
+  "rows": [
+    [0.220,  2.0e-6],
+    [0.500,  9.0e-7],
+    [1.000,  6.0e-7],
+    [3.000,  4.5e-7],
+    [10.00,  3.0e-7],
+    [30.00,  4.0e-7],
+    [70.00,  1.0e-6]
+  ]
+}
