@@ -1,0 +1,6 @@
+{
+  "source": "GAIA DR3 + DESI MWS DM phase-space anomaly z-score",
+  "url": "GAIA DR3 (Gaia Collaboration 2023) + DESI MWS 2024",
+  "primary": "a6e2322a2b4eff0d180b559e9f4aab549a6a0531d99185adc5b74c3e1e95e66e",
+  "notes": "auto-generated; rerun scripts/refresh_manifests.py after editing the cached file"
+}

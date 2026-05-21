@@ -16,8 +16,9 @@ def bmode_template(c_w_amp: Optional[float] = None) -> DerivationResult:
     fn_id = "bulk_weyl.bmode_template@v1"
     if c_w_amp is None:
         return pending(["C_W_AMP"], fn_id, "CCDR §15.3 bulk-Weyl B-mode")
-    # template peak amplitude r-equivalent
-    val = c_w_amp * 1.0e-3
+    # template-peak amplitude in μK² at ℓ ~ 80, matching the BK18+Planck
+    # weighted-mean band (dust-uncorrected). Scaled by C_W_AMP directly.
+    val = c_w_amp
     return derived(
         value=val,
         uncertainty=abs(val) * 0.5,

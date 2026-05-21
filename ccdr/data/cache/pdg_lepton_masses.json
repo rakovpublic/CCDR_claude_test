@@ -1,0 +1,10 @@
+{
+  "source": "PDG charged-lepton masses",
+  "url": "Particle Data Group 2024",
+  "columns": ["lepton", "mass_mev", "sigma_mev"],
+  "rows": [
+    ["electron",   0.51099895,    0.00000015],
+    ["muon",     105.6583755,     0.0000023],
+    ["tau",     1776.86,           0.12]
+  ]
+}

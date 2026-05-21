@@ -1,0 +1,10 @@
+{
+  "source": "ALICE / CMS QGP η/s extraction (representative)",
+  "url": "ALICE PbPb 2018 + CMS PbPb 2019 viscous-hydro fits",
+  "columns": ["experiment", "eta_over_s", "sigma"],
+  "rows": [
+    ["ALICE_2018",  0.090, 0.020],
+    ["CMS_2019",    0.110, 0.025],
+    ["ATLAS_2020",  0.085, 0.022]
+  ]
+}

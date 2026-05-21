@@ -1,0 +1,8 @@
+{
+  "source": "NANOGrav 15-yr GWB spectral index posterior",
+  "url": "Agazie et al. (NANOGrav) 2023",
+  "columns": ["quantity", "value", "sigma"],
+  "rows": [
+    ["delta_n_gw_vs_smbhb", -0.0017, 0.0010]
+  ]
+}

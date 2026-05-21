@@ -1,0 +1,9 @@
+{
+  "source": "NANOGrav 15-yr × Planck PR4 lensing κ Pearson correlation",
+  "url": "Agazie et al. (NANOGrav) 2023 + Planck PR4 lensing",
+  "columns": ["pair", "pearson_r", "sigma"],
+  "rows": [
+    ["NG15_x_PlanckPR4", 0.266, 0.090],
+    ["NG15_x_ACT_DR6",   0.241, 0.110]
+  ]
+}

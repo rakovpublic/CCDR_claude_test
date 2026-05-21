@@ -41,11 +41,13 @@ def epsilon_spectrum(
     alpha_j: Optional[float] = None,
     alpha_t: Optional[float] = None,
     alpha_w: Optional[float] = None,
+    epsilon_bd: Optional[float] = None,
 ) -> DerivationResult:
-    """Predicted summary index of boundary-deformation ε_ℓm spectrum.
+    """Predicted fractional residual of boundary-deformation ε_ℓm spectrum.
 
     The full spectrum is a function (ℓ,m) → ε_ℓm; the scalar value returned
-    here is a summary slope used as the test statistic.
+    here is the typical fractional residual:
+        residual = epsilon_bd · ⟨α⟩  (mean exponent)
     """
     fn_id = "boundary_deformation.epsilon_spectrum@v1"
     missing = []
@@ -55,14 +57,17 @@ def epsilon_spectrum(
         missing.append("ALPHA_T")
     if alpha_w is None:
         missing.append("ALPHA_W")
+    if epsilon_bd is None:
+        missing.append("EPSILON_BD")
     if missing:
         return pending(missing, fn_id, "CCDR §15.5 ε_ℓm spectrum")
-    slope = (alpha_j + alpha_t + alpha_w) / 3.0
+    mean_alpha = (alpha_j + alpha_t + alpha_w) / 3.0
+    residual = epsilon_bd * mean_alpha
     return derived(
-        value=slope,
-        uncertainty=0.15,
+        value=residual,
+        uncertainty=abs(residual) * 0.4,
         fn_id=fn_id,
         provenance="CCDR §15.5 boundary-deformation ε_ℓm spectrum",
         parameters_used={"ALPHA_J": alpha_j, "ALPHA_T": alpha_t,
-                         "ALPHA_W": alpha_w},
+                         "ALPHA_W": alpha_w, "EPSILON_BD": epsilon_bd},
     )

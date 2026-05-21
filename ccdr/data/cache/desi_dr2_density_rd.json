@@ -1,0 +1,8 @@
+{
+  "source": "DESI DR2 density-stratified BAO sound horizon shift",
+  "url": "DESI Collaboration 2024 (DR2 density-binned)",
+  "columns": ["bin", "delta_rd_over_rd_high_minus_low", "sigma"],
+  "rows": [
+    ["LRG_density_proxy", -0.005, 0.003]
+  ]
+}

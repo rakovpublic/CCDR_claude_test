@@ -1,0 +1,11 @@
+{
+  "source": "Planck NPIPE f_NL bispectrum constraints (partial sensitivity)",
+  "url": "Planck Collaboration 2020 (NPIPE)",
+  "columns": ["template", "f_NL", "sigma"],
+  "rows": [
+    ["local",           -0.9, 5.1],
+    ["equilateral",    -26.0, 47.0],
+    ["orthogonal",     -38.0, 24.0],
+    ["grain_proxy",     1.7,  1.4]
+  ]
+}
