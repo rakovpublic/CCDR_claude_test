@@ -1,0 +1,9 @@
+# Force LF on all bundled data and manifest files so SHA256 stays stable
+# across Linux / macOS / Windows checkouts.
+ccdr/data/cache/*.json    text eol=lf
+ccdr/data/manifests/*.json text eol=lf
+ccdr/data/cache/README*    text eol=lf
+ccdr/data/manifests/README* text eol=lf
+
+# Source code uses native line endings — git's default heuristic is fine.
+* text=auto
