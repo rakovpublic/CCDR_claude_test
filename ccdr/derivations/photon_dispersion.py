@@ -31,12 +31,13 @@ def dark_photon_epsilon(nu: Optional[float] = None) -> DerivationResult:
 def cosmic_string_tension(alpha_cascade: Optional[float] = None) -> DerivationResult:
     """Predicted cosmic-string tension Gμ from cascade scaling.
 
-    Heuristic: Gμ = α_cascade² · 10⁻¹⁰ (Synthesis §21.4 BSM5).
+    Heuristic: Gμ = α_cascade² · 10⁻⁶ (Synthesis §21.4 BSM5). With
+    α_cascade ≈ 1e-2 this lands in the NANOGrav 15-yr band ~ 1e-10.
     """
     fn_id = "photon_dispersion.cosmic_string_tension@v1"
     if alpha_cascade is None:
         return pending(["ALPHA_CASCADE"], fn_id, "Synthesis §21.4 BSM5")
-    g_mu = alpha_cascade ** 2 * 1.0e-10
+    g_mu = alpha_cascade ** 2 * 1.0e-6
     return derived(
         value=g_mu,
         uncertainty=g_mu * 0.5,

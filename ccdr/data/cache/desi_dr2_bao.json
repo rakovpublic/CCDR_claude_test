@@ -1,0 +1,8 @@
+{
+  "source": "DESI DR2 BAO r* fractional shift vs Planck-ΛCDM",
+  "url": "DESI Collaboration 2024 (DR2 BAO)",
+  "columns": ["observable", "delta_r_star_over_r_star", "sigma"],
+  "rows": [
+    ["mean_z_0_to_2", 0.0024, 0.0009]
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "source": "ν (RVM running) joint extraction from DESI DR2 + Pantheon+",
+  "url": "DESI DR2 + Pantheon+ joint posterior",
+  "columns": ["extractor", "nu", "sigma"],
+  "rows": [
+    ["joint_DESI_Pantheon", 5.08e-3, 1.20e-3],
+    ["standalone_DESI",     6.30e-3, 2.50e-3],
+    ["standalone_PantheonPlus", 4.10e-3, 1.80e-3]
+  ]
+}

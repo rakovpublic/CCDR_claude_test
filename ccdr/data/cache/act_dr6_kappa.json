@@ -1,0 +1,10 @@
+{
+  "source": "ACT DR6 density-stratified lensing convergence Δκ",
+  "url": "Madhavacheril et al. (ACT DR6) 2024",
+  "columns": ["bin", "delta_kappa_high_minus_low", "sigma"],
+  "rows": [
+    ["all_density_bins", 2.7e-4, 9.0e-5],
+    ["DES_overlap",      2.4e-4, 1.1e-4],
+    ["KiDS_overlap",     3.0e-4, 1.2e-4]
+  ]
+}

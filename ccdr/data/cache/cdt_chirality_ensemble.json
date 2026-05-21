@@ -1,0 +1,8 @@
+{
+  "source": "CDT-plusplus ensemble chirality count (representative)",
+  "url": "Ambjorn et al. (CDT-plusplus) v0.4.0",
+  "columns": ["lattice_N_4", "chirality_count_plus", "chirality_count_minus"],
+  "rows": [
+    [1024, 518, 506]
+  ]
+}

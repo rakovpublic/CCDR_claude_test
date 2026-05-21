@@ -1,5 +1,5 @@
 """P-A11 — Boundary-deformation ε_ℓm spectrum (EHT + GWTC-3 composite)."""
-from ccdr.core.parameters import ALPHA_J, ALPHA_T, ALPHA_W
+from ccdr.core.parameters import ALPHA_J, ALPHA_T, ALPHA_W, EPSILON_BD
 from ccdr.core.status import MeasurementResult, MeasurementStatus
 from ccdr.derivations.boundary_deformation import epsilon_spectrum
 from ccdr.data.loaders.eht import load_m87_sgrA
@@ -18,7 +18,10 @@ _ESTIMATOR_ID = "boundary_residual.boundary_deformation_residual"
 
 
 def derive():
-    return epsilon_spectrum(alpha_j=ALPHA_J, alpha_t=ALPHA_T, alpha_w=ALPHA_W)
+    return epsilon_spectrum(
+        alpha_j=ALPHA_J, alpha_t=ALPHA_T, alpha_w=ALPHA_W,
+        epsilon_bd=EPSILON_BD,
+    )
 
 
 def measure():

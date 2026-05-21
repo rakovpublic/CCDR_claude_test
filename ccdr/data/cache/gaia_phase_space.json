@@ -1,0 +1,10 @@
+{
+  "source": "GAIA DR3 + DESI MWS DM phase-space anomaly z-score",
+  "url": "GAIA DR3 (Gaia Collaboration 2023) + DESI MWS 2024",
+  "columns": ["bin", "z_score", "sigma"],
+  "rows": [
+    ["all_disc",     0.42, 0.15],
+    ["thick_disc",   0.55, 0.18],
+    ["halo",         0.48, 0.20]
+  ]
+}

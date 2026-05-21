@@ -1,0 +1,6 @@
+{
+  "source": "ALICE / CMS QGP \u03b7/s extraction (representative)",
+  "url": "ALICE PbPb 2018 + CMS PbPb 2019 viscous-hydro fits",
+  "primary": "62f16b291504295630466d417ed675d88c5dd57c7b80d5b4e4e5a39d83a95a13",
+  "notes": "auto-generated; rerun scripts/refresh_manifests.py after editing the cached file"
+}

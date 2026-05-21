@@ -134,6 +134,32 @@ def joint_density_sign(
     )
 
 
+def fnl_grain(
+    r_grain_mpc_h: Optional[float] = None,
+    r_star_bao: Optional[float] = None,
+) -> DerivationResult:
+    """Predicted scale-dependent f_NL^grain (P-B02).
+
+    f_NL^grain = (r* / r_grain)^2 · 1e-2
+    """
+    fn_id = "grain_boundary.fnl_grain@v1"
+    missing = []
+    if r_grain_mpc_h is None:
+        missing.append("R_GRAIN_MPC_H")
+    if r_star_bao is None:
+        missing.append("R_STAR_BAO")
+    if missing:
+        return pending(missing, fn_id, "CCDR §8.x scale-dependent f_NL")
+    val = (r_star_bao / r_grain_mpc_h) ** 2 * 1.0e-2
+    return derived(
+        value=val,
+        uncertainty=val * 0.4,
+        fn_id=fn_id,
+        provenance="CCDR §8.x grain-boundary scale-dependent f_NL",
+        parameters_used={"R_GRAIN_MPC_H": r_grain_mpc_h, "R_STAR_BAO": r_star_bao},
+    )
+
+
 def eta_over_s_enhancement(
     nu: Optional[float] = None,
     c_eta_s: Optional[float] = None,

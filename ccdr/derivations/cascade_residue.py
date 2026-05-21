@@ -96,3 +96,98 @@ def frozen_live_fraction(
         provenance="CCDR §13 cascade retention",
         parameters_used={"RHO_CASCADE": rho, "N_CASCADE": n_total},
     )
+
+
+def fsigma8_modification(
+    f_live: Optional[float] = None,
+    alpha_growth: Optional[float] = None,
+    z: float = 0.5,
+) -> DerivationResult:
+    """Predicted multiplicative modification to fσ_8(z) (P-B06).
+
+    fσ_8(z) / fσ_8_ΛCDM(z) = 1 + alpha_growth · f_live · (1+z)
+    """
+    fn_id = "cascade_residue.fsigma8_modification@v1"
+    missing = []
+    if f_live is None:
+        missing.append("F_LIVE")
+    if alpha_growth is None:
+        missing.append("ALPHA_GROWTH")
+    if missing:
+        return pending(missing, fn_id, "CCDR §13 frozen-vs-live fσ_8 deficit")
+    val = 1.0 + alpha_growth * f_live * (1.0 + z)
+    return derived(
+        value=val,
+        uncertainty=abs(alpha_growth * f_live) * 0.4,
+        fn_id=fn_id,
+        provenance="CCDR §13 frozen-vs-live growth modification",
+        parameters_used={"F_LIVE": f_live, "ALPHA_GROWTH": alpha_growth, "z_eval": z},
+    )
+
+
+def delta_kappa_density(
+    c_kappa: Optional[float] = None,
+    nu: Optional[float] = None,
+) -> DerivationResult:
+    """Density-correlated Δκ amplitude Δκ = c_κ · ν (P-B07)."""
+    fn_id = "cascade_residue.delta_kappa_density@v1"
+    missing = []
+    if c_kappa is None:
+        missing.append("C_KAPPA")
+    if nu is None:
+        missing.append("NU")
+    if missing:
+        return pending(missing, fn_id, "CCDR §13 density-stratified κ")
+    val = c_kappa * nu
+    return derived(
+        value=val,
+        uncertainty=abs(val) * 0.3,
+        fn_id=fn_id,
+        provenance="CCDR §13 density-stratified Δκ",
+        parameters_used={"C_KAPPA": c_kappa, "NU": nu},
+    )
+
+
+def mu_y_per_stage(
+    per_stage_energy_injection: Optional[float] = None,
+    n_total: Optional[int] = None,
+) -> DerivationResult:
+    """Predicted total μ spectral distortion from cascade stages (P-B08).
+
+    Toy model: μ = N · ΔE_k (sums over all cascade stages above z=10⁶).
+    Returns μ as the scalar value; y has the same scale within a factor.
+    """
+    fn_id = "cascade_residue.mu_y_per_stage@v1"
+    missing = []
+    if per_stage_energy_injection is None:
+        missing.append("PER_STAGE_ENERGY_INJECTION")
+    if n_total is None:
+        missing.append("N_CASCADE")
+    if missing:
+        return pending(missing, fn_id, "CCDR §6 μ, y from cascade-stage injection")
+    mu = n_total * per_stage_energy_injection
+    return derived(
+        value=mu,
+        uncertainty=mu * 0.5,
+        fn_id=fn_id,
+        provenance="CCDR §6 μ from staged energy injection",
+        parameters_used={"PER_STAGE_ENERGY_INJECTION": per_stage_energy_injection,
+                         "N_CASCADE": n_total},
+    )
+
+
+def dm_phase_space_zscore(
+    z_score_amplitude: Optional[float] = None,
+) -> DerivationResult:
+    """Predicted DM phase-space drift z-score amplitude (P-B10)."""
+    fn_id = "cascade_residue.dm_phase_space_zscore@v1"
+    if z_score_amplitude is None:
+        return pending(["Z_SCORE_AMPLITUDE"], fn_id,
+                       "P-B10 live-DM phase-space response")
+    return derived(
+        value=z_score_amplitude,
+        uncertainty=abs(z_score_amplitude) * 0.3,
+        fn_id=fn_id,
+        provenance="CCDR §13 live-DM phase-space response",
+        parameters_used={"Z_SCORE_AMPLITUDE": z_score_amplitude},
+    )

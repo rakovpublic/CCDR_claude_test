@@ -1,0 +1,6 @@
+{
+  "source": "FIRAS COBE spectral distortion limits (\u03bc, y)",
+  "url": "Fixsen et al. 1996, Mather et al. 1994",
+  "primary": "e6486a5edcd2a9b0a5c469e6b6bdfbf658e1b603de63e6e30609a050dafb38bc",
+  "notes": "auto-generated; rerun scripts/refresh_manifests.py after editing the cached file"
+}

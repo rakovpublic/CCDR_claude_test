@@ -1,41 +1,47 @@
-"""P-D01 — Koide Q = 2/3 charged-lepton mass relation (Tier D stub).
-
-Marked DERIVATION_INCOMPLETE because the theorem from C₆ᵥ symmetry on the
-Hermitian mass matrix has not yet been rigorously proven (§21 execution).
-"""
-from ccdr.core.parameters import PARAMETERS_REVISION
-from ccdr.core.status import (
-    DerivationResult, DerivationStatus,
-    MeasurementResult, MeasurementStatus,
-    TestResult, TestStatus,
+"""P-D01 — Koide Q = 2/3 (PDG charged-lepton masses)."""
+from ccdr.core.status import MeasurementResult, MeasurementStatus
+from ccdr.derivations.particle_inventory import koide_q
+from ccdr.data.loaders.tier_b import load_pdg_lepton_masses
+from ccdr.data.loaders._common import DataUnavailable
+from ccdr.data.estimators.koide import koide_q as koide_estimator
+from ccdr.predictions.base import (
+    handle_derivation, measurement_failed_result, run_sigma_test,
 )
 
 ID = "P-D01"
 NAME = "Koide Q = 2/3"
+PASS_THRESHOLD_SIGMA = 3.0
+_DATA_SOURCE = "PDG charged-lepton masses"
+_ESTIMATOR_ID = "koide.koide_q"
 
 
 def derive():
-    return DerivationResult(
-        status=DerivationStatus.DERIVATION_INCOMPLETE,
-        derivation_function_id="particle_inventory.koide@v0-pending",
-        provenance="SM-D5 — requires §21 proof of Q=2/3 from C₆ᵥ symmetry",
-    )
+    return koide_q()
 
 
 def measure():
+    try:
+        masses, sha = load_pdg_lepton_masses()
+    except DataUnavailable:
+        return MeasurementResult(
+            status=MeasurementStatus.DATA_UNAVAILABLE,
+            data_source=_DATA_SOURCE, estimator_id=_ESTIMATOR_ID,
+        )
+    q, sigma, n = koide_estimator(masses)
     return MeasurementResult(
-        status=MeasurementStatus.DATA_UNAVAILABLE,
-        data_source="PDG charged-lepton masses (Tier D — pending §21)",
-        estimator_id="tier-d-stub",
+        status=MeasurementStatus.MEASURED,
+        value=q, uncertainty=sigma,
+        data_source=_DATA_SOURCE, data_sha256=sha,
+        estimator_id=_ESTIMATOR_ID, n_samples=n,
     )
 
 
 def test():
     d = derive()
+    blocker = handle_derivation(ID, d)
+    if blocker:
+        return blocker
     m = measure()
-    return TestResult(
-        prediction_id=ID, status=TestStatus.NOT_RUN,
-        derivation=d, measurement=m,
-        parameters_revision=PARAMETERS_REVISION,
-        notes="Tier D — pending §21 numerical execution",
-    )
+    if m.status != MeasurementStatus.MEASURED:
+        return measurement_failed_result(ID, d, m)
+    return run_sigma_test(ID, d, m, PASS_THRESHOLD_SIGMA)

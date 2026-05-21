@@ -1,0 +1,9 @@
+{
+  "source": "FIRAS COBE spectral distortion limits (μ, y)",
+  "url": "Fixsen et al. 1996, Mather et al. 1994",
+  "columns": ["distortion", "value", "sigma_or_ul"],
+  "rows": [
+    ["mu_upper_limit",  9.0e-5, 9.0e-5],
+    ["y_upper_limit",  1.5e-5, 1.5e-5]
+  ]
+}

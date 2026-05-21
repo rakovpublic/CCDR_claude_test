@@ -1,0 +1,6 @@
+{
+  "source": "PDG charged-lepton masses",
+  "url": "Particle Data Group 2024",
+  "primary": "ffa5f24c5d5f8ddee78b9ad98da75a804288e5510c2c374340b2503106f60522",
+  "notes": "auto-generated; rerun scripts/refresh_manifests.py after editing the cached file"
+}

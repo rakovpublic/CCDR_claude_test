@@ -1,30 +1,40 @@
-"""P-A15 — CDT chirality count (CDT-plusplus simulation; no public-data loader)."""
-from ccdr.core.parameters import PARAMETERS_REVISION
-from ccdr.core.status import (
-    MeasurementResult, MeasurementStatus, TestResult, TestStatus,
-)
+"""P-A15 — CDT chirality count (CDT-plusplus ensemble bundled in cache)."""
+from ccdr.core.parameters import N_CDT_LATTICE
+from ccdr.core.status import MeasurementResult, MeasurementStatus
 from ccdr.derivations.lattice_count import cdt_chirality
-from ccdr.data.estimators.chirality import chirality_count
-from ccdr.predictions.base import handle_derivation, run_sigma_test, measurement_failed_result
+from ccdr.data.loaders.tier_b import load_cdt_chirality_ensemble
+from ccdr.data.loaders._common import DataUnavailable
+from ccdr.predictions.base import (
+    handle_derivation, measurement_failed_result, run_sigma_test,
+)
 
 ID = "P-A15"
 NAME = "CDT chirality count"
 PASS_THRESHOLD_SIGMA = 2.0
-_DATA_SOURCE = "CDT-plusplus simulation (deferred)"
+_DATA_SOURCE = "CDT-plusplus ensemble"
 _ESTIMATOR_ID = "chirality.chirality_count"
 
 
 def derive():
-    # Without an N_4 input the derivation reports DERIVATION_INCOMPLETE.
-    return cdt_chirality()
+    return cdt_chirality(N_4=N_CDT_LATTICE)
 
 
 def measure():
-    # No public data loader; until the CDT-plusplus ensemble is available
-    # this is data-unavailable.
+    try:
+        payload, sha = load_cdt_chirality_ensemble()
+    except DataUnavailable:
+        return MeasurementResult(
+            status=MeasurementStatus.DATA_UNAVAILABLE,
+            data_source=_DATA_SOURCE, estimator_id=_ESTIMATOR_ID,
+        )
+    plus = payload["plus"]
+    total = payload["total"]
     return MeasurementResult(
-        status=MeasurementStatus.DATA_UNAVAILABLE,
-        data_source=_DATA_SOURCE, estimator_id=_ESTIMATOR_ID,
+        status=MeasurementStatus.MEASURED,
+        value=float(plus),
+        uncertainty=plus ** 0.5,
+        data_source=_DATA_SOURCE, data_sha256=sha,
+        estimator_id=_ESTIMATOR_ID, n_samples=total,
     )
 
 
