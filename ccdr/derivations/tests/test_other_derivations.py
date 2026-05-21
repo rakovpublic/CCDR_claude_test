@@ -7,7 +7,7 @@ from ccdr.derivations.photon_dispersion import dark_photon_epsilon, cosmic_strin
 from ccdr.derivations.boundary_deformation import qnm_deviation, epsilon_spectrum
 from ccdr.derivations.bulk_weyl import bmode_template, bmode_shape
 from ccdr.derivations.flavour_wilson import b_to_smumu_pattern
-from ccdr.derivations.particle_inventory import axion_mass, right_handed_nu_mass
+from ccdr.derivations.particle_inventory import axion_mass, right_handed_nu_mass, optical_phonon_dm
 from ccdr.derivations.joint_inference import posterior
 
 
@@ -83,6 +83,15 @@ def test_axion_scales_inverse_f():
     r2 = axion_mass(f_pq=2e12)
     assert abs(r2.value * 2 - r1.value) < 1e-9
 
+
+
+
+def test_optical_phonon_elastic_overlap_repair():
+    r = optical_phonon_dm(m_dm_gev=100.0, sigma_dm_cm2=1.0e-46, nu=5.08e-3)
+    assert r.derivation_function_id.endswith("v2_elastic_overlap")
+    assert abs(r.value - 5.08e-49) / 5.08e-49 < 1e-12
+    assert r.parameters_used["SIGMA_DM_CM2_GEOMETRIC"] == 1.0e-46
+    assert r.parameters_used["KAPPA_ELASTIC"] == 5.08e-3
 
 def test_nuR_pending():
     assert right_handed_nu_mass().status == DerivationStatus.PARAMETER_PENDING

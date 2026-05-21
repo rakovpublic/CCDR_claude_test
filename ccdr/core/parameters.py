@@ -20,7 +20,7 @@ scaffold, reset every assignment to None and bump the revision tag to
 # ---------------------------------------------------------------------------
 # Revision tag — bump whenever any value below changes.
 # ---------------------------------------------------------------------------
-PARAMETERS_REVISION = "v7.7-r10-pr1-tierb"
+PARAMETERS_REVISION = "v7.7-r10-pr3-pb12"
 
 # ---------------------------------------------------------------------------
 # Cascade / TGFT-RG core
@@ -74,7 +74,7 @@ C_R = 0.01                   # sign+magnitude of δr_d/r_d coefficient (P-B09)
 SIGN_DELTA_R_D = -1          # OP12 sign commit: negative
 Z_SCORE_AMPLITUDE = 0.5      # DM phase-space drift z-score (P-B10)
 M_DM_GEV = 100.0             # optical-phonon DM mass (P-B12)
-SIGMA_DM_CM2 = 1.0e-46       # optical-phonon DM SI cross-section (P-B12)
+SIGMA_DM_CM2 = 1.0e-46       # unsuppressed optical-phonon geometric SI anchor (P-B12)
 
 # ---------------------------------------------------------------------------
 # Lattice / CDT (P-A15)

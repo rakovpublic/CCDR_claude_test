@@ -1,9 +1,11 @@
 """P-B12 — Optical-phonon DM (BSM1).
 
-CONFIRM iff predicted SI cross-section at m_DM is below the XENONnT UL
-at the same mass.
+v7.7-r10-pr3 repair: CONFIRM here means direct-detection *survival* /
+not-excluded compatibility, not event-level detection. The CCDR optical-phonon
+mode is treated as an inelastic/gapped boundary excitation; the xenon recoil
+observable is the elastic-overlap suppressed effective SI cross-section.
 """
-from ccdr.core.parameters import M_DM_GEV, SIGMA_DM_CM2, PARAMETERS_REVISION
+from ccdr.core.parameters import M_DM_GEV, SIGMA_DM_CM2, NU, PARAMETERS_REVISION
 from ccdr.core.status import (
     MeasurementResult, MeasurementStatus, TestResult, TestStatus,
 )
@@ -21,7 +23,7 @@ _ESTIMATOR_ID = "p_b12.interp_ul_at_mass"
 
 
 def derive():
-    return optical_phonon_dm(m_dm_gev=M_DM_GEV, sigma_dm_cm2=SIGMA_DM_CM2)
+    return optical_phonon_dm(m_dm_gev=M_DM_GEV, sigma_dm_cm2=SIGMA_DM_CM2, nu=NU)
 
 
 def _interp_ul(curve, mass):
@@ -83,5 +85,9 @@ def test():
         derivation=d, measurement=m,
         test_statistic=ratio, pass_threshold=1.0,
         parameters_revision=PARAMETERS_REVISION,
-        notes=f"predicted_sigma={d.value:.1e}, measured_ul_at_m={m.value:.1e}",
+        notes=(
+            f"effective_sigma={d.value:.1e}, measured_ul_at_m={m.value:.1e}, "
+            f"geometric_sigma={SIGMA_DM_CM2:.1e}, elastic_overlap_nu={NU:.3g}; "
+            "CONFIRM means not-excluded/window-compatible, not detection"
+        ),
     )

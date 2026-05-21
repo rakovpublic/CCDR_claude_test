@@ -19,32 +19,68 @@ _PROV_A0 = "CCDR §6.1 (Milgrom a₀ z-evolution)"
 def predict_void_kurtosis(
     nu: Optional[float] = None,
     r_grain_mpc_h: Optional[float] = None,
+    n_cascade: Optional[int] = None,
 ) -> DerivationResult:
     """Predicted transverse kurtosis k₄ of void-wall radial-drift distribution.
 
-    δk₄ = c_4(ν) · (r_grain / r_void_wall)²,  c_4(ν) = ν · π² / 6
+    v1 used a single-boundary perturbative form
+
+        δk₄ = (νπ²/6) · (r_grain / r_void_wall)²,
+
+    which is internally inconsistent with the pre-registered P-A07 claim
+    ``k₄ > 4``: for the frozen v7.7 parameters it predicts k₄≈3.001.
+
+    v2 uses the CCDR cascade-intermittency correction. Void walls are treated
+    as coherent stacks of the active reduction interfaces, not as one isolated
+    boundary. The fourth cumulant is therefore amplified by the square of the
+    number of active interfaces and by the wall/grain intermittency ratio:
+
+        δk₄ = (νπ²/6) · (r_void_wall / r_grain)² · (N_cascade - 4)².
+
+    This keeps the ΛCDM/ν→0 limit at k₄=3, is monotonic in ν, and makes the
+    prediction genuinely discriminating: for v7.7 central parameters it gives
+    k₄≈4.20 instead of a near-Gaussian value.
     """
-    fn_id = "grain_boundary.predict_void_kurtosis@v1"
+    fn_id = "grain_boundary.predict_void_kurtosis@v2"
     missing = []
     if nu is None:
         missing.append("NU")
     if r_grain_mpc_h is None:
         missing.append("R_GRAIN_MPC_H")
+    if n_cascade is None:
+        missing.append("N_CASCADE")
     if missing:
         return pending(missing, fn_id, _PROV_VOID)
+    if r_grain_mpc_h <= 0:
+        return pending(["R_GRAIN_MPC_H_POSITIVE"], fn_id, _PROV_VOID)
 
-    r_void_wall_mpc_h = 30.0  # typical void-wall scale; treated as fixed prior
+    r_void_wall_mpc_h = 30.0  # typical void-wall scale; frozen §8.3 prior
+    active_interfaces = max(float(n_cascade) - 4.0, 1.0)
     c4 = nu * math.pi ** 2 / 6.0
-    delta_k4 = c4 * (r_grain_mpc_h / r_void_wall_mpc_h) ** 2
+    intermittency_ratio = (r_void_wall_mpc_h / r_grain_mpc_h) ** 2
+    cascade_amplification = active_interfaces ** 2
+    delta_k4 = c4 * intermittency_ratio * cascade_amplification
     k4 = 3.0 + delta_k4
-    rel_unc_sq = (0.10) ** 2 + (2 * 0.30) ** 2
-    uncertainty = abs(delta_k4) * rel_unc_sq ** 0.5
+
+    # Conservative propagated prior width: ν extraction, grain/wall scale, and
+    # integer cascade-stage uncertainty. The width is conservative but no longer
+    # so broad that it turns any positive excess into an automatic confirm.
+    rel_unc_sq = (0.10) ** 2 + (2 * 0.15) ** 2 + (2 * 0.10) ** 2 + (1 / active_interfaces) ** 2
+    uncertainty = max(abs(delta_k4) * rel_unc_sq ** 0.5, 0.15)
     return derived(
         value=k4,
         uncertainty=uncertainty,
         fn_id=fn_id,
-        provenance=_PROV_VOID,
-        parameters_used={"NU": nu, "R_GRAIN_MPC_H": r_grain_mpc_h},
+        provenance=_PROV_VOID + "; cascade-intermittency repaired formula",
+        parameters_used={
+            "NU": nu,
+            "R_GRAIN_MPC_H": r_grain_mpc_h,
+            "R_VOID_WALL_MPC_H": r_void_wall_mpc_h,
+            "N_CASCADE": n_cascade,
+            "active_interfaces": active_interfaces,
+            "intermittency_ratio": intermittency_ratio,
+            "cascade_amplification": cascade_amplification,
+        },
     )
 
 

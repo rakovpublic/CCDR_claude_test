@@ -1,5 +1,5 @@
 """P-A07 — Void-wall transverse kurtosis k₄ > 4."""
-from ccdr.core.parameters import NU, R_GRAIN_MPC_H
+from ccdr.core.parameters import NU, R_GRAIN_MPC_H, N_CASCADE
 from ccdr.core.status import MeasurementResult, MeasurementStatus
 from ccdr.derivations.grain_boundary import predict_void_kurtosis
 from ccdr.data.loaders.vast_voids import load_vast_catalogue
@@ -17,7 +17,7 @@ _ESTIMATOR_ID = "kurtosis.transverse_kurtosis"
 
 
 def derive():
-    return predict_void_kurtosis(nu=NU, r_grain_mpc_h=R_GRAIN_MPC_H)
+    return predict_void_kurtosis(nu=NU, r_grain_mpc_h=R_GRAIN_MPC_H, n_cascade=N_CASCADE)
 
 
 def measure():

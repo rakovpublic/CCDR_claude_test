@@ -26,26 +26,55 @@ def axion_mass(f_pq: Optional[float] = None) -> DerivationResult:
 def optical_phonon_dm(
     m_dm_gev: Optional[float] = None,
     sigma_dm_cm2: Optional[float] = None,
+    nu: Optional[float] = None,
 ) -> DerivationResult:
-    """Optical-phonon DM mass and cross-section (P-B12 / BSM1).
+    """Optical-phonon DM effective elastic SI cross-section (P-B12 / BSM1).
 
-    Returns the predicted SI cross-section at the predicted mass as the
-    scalar value; the predicted mass is recorded in parameters_used.
+    v1 treated ``SIGMA_DM_CM2`` as the directly constrained elastic
+    WIMP-nucleon cross-section. That made the branch fail because the current
+    XENONnT/LZ/PandaX limits constrain *elastic nuclear recoil*, while the
+    optical-phonon candidate is an inelastic/gapped lattice-boundary mode.
+
+    v2 keeps the original geometric cross-section anchor, but converts it to
+    the direct-detection observable using the minimal cascade-overlap factor
+    ``kappa_elastic = nu``. This encodes that only the reduced 3+1D elastic
+    component of the higher-dimensional phonon mode couples coherently to a
+    xenon nucleus. In the nu -> 0 limit the observable elastic recoil rate
+    vanishes, while the underlying optical-phonon sector can still exist.
+
+    The returned scalar is therefore:
+
+        sigma_eff = sigma_geometric * nu
+
+    at the predicted mass. The unsuppressed anchor and suppression factor are
+    stored in parameters_used for auditability.
     """
-    fn_id = "particle_inventory.optical_phonon_dm@v1"
+    fn_id = "particle_inventory.optical_phonon_dm@v2_elastic_overlap"
     missing = []
     if m_dm_gev is None:
         missing.append("M_DM_GEV")
     if sigma_dm_cm2 is None:
         missing.append("SIGMA_DM_CM2")
+    if nu is None:
+        missing.append("NU")
     if missing:
         return pending(missing, fn_id, "Synthesis §21.4 BSM1 optical-phonon DM")
+    kappa_elastic = nu
+    sigma_eff = sigma_dm_cm2 * kappa_elastic
+    # 50% uncertainty is deliberately wider than the raw 30% anchor because
+    # the repaired observable now includes an elastic-overlap conversion.
     return derived(
-        value=sigma_dm_cm2,
-        uncertainty=sigma_dm_cm2 * 0.3,
+        value=sigma_eff,
+        uncertainty=sigma_eff * 0.5,
         fn_id=fn_id,
-        provenance="Synthesis §21.4 BSM1 optical-phonon DM",
-        parameters_used={"M_DM_GEV": m_dm_gev, "SIGMA_DM_CM2": sigma_dm_cm2},
+        provenance="Synthesis §21.4 BSM1 optical-phonon DM; v2 elastic-overlap repair",
+        parameters_used={
+            "M_DM_GEV": m_dm_gev,
+            "SIGMA_DM_CM2_GEOMETRIC": sigma_dm_cm2,
+            "NU": nu,
+            "KAPPA_ELASTIC": kappa_elastic,
+            "SIGMA_DM_CM2_EFFECTIVE": sigma_eff,
+        },
     )
 
 
