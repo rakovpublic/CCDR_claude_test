@@ -3,6 +3,12 @@
 This module is framework-blind by design: it knows nothing about
 derivations or framework parameters. The framework-blind lint test
 enforces this.
+
+SHA256 is computed over the *line-ending-normalised* file content
+(CRLF → LF). This keeps the manifest SHA stable across Linux, macOS,
+and Windows checkouts even when git normalises line endings. The
+.gitattributes file also pins cache and manifest files to LF, so on
+a clean checkout normalised and raw SHA agree.
 """
 import hashlib
 import json
@@ -25,12 +31,14 @@ def sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def _normalise_line_endings(data: bytes) -> bytes:
+    return data.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+
+
 def sha256_file(path: pathlib.Path) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(65536), b""):
-            h.update(chunk)
-    return h.hexdigest()
+    """SHA256 of a file's content with line endings normalised to LF."""
+    data = pathlib.Path(path).read_bytes()
+    return hashlib.sha256(_normalise_line_endings(data)).hexdigest()
 
 
 def load_manifest(name: str) -> dict:
@@ -57,7 +65,7 @@ def read_cached_json(name: str) -> Tuple[Any, str]:
         raise DataQualityFailed(
             f"SHA256 mismatch for {name}: expected {expected}, got {sha}"
         )
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         return json.load(f), sha
 
 

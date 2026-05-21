@@ -11,13 +11,18 @@ CACHE = ROOT / "ccdr" / "data" / "cache"
 MANIFESTS = ROOT / "ccdr" / "data" / "manifests"
 
 
+def _normalised_sha(path: pathlib.Path) -> str:
+    data = path.read_bytes().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    return hashlib.sha256(data).hexdigest()
+
+
 def main():
     MANIFESTS.mkdir(parents=True, exist_ok=True)
     for p in sorted(CACHE.glob("*.json")):
-        sha = hashlib.sha256(p.read_bytes()).hexdigest()
+        sha = _normalised_sha(p)
         name = p.stem
         try:
-            with open(p) as f:
+            with open(p, encoding="utf-8") as f:
                 meta = json.load(f)
         except json.JSONDecodeError:
             meta = {}
