@@ -18,4 +18,4 @@ include = ["ccdr*"]
 exclude = ["ccdr.data.cache*"]
 
 [tool.pytest.ini_options]
-testpaths = ["ccdr/tests", "ccdr/derivations/tests", "ccdr/data/tests"]
+testpaths = ["ccdr/tests", "ccdr/derivations/tests", "ccdr/data/tests", "ccdr/audits/op11_nu/tests"]
