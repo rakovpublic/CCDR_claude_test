@@ -20,13 +20,46 @@ scaffold, reset every assignment to None and bump the revision tag to
 # ---------------------------------------------------------------------------
 # Revision tag — bump whenever any value below changes.
 # ---------------------------------------------------------------------------
-PARAMETERS_REVISION = "v7.7-r10-pr3-pb12"
+PARAMETERS_REVISION = "v7.7-r11-pr1-op11"
 
 # ---------------------------------------------------------------------------
-# Cascade / TGFT-RG core
+# OP11 ν gate — NU is no longer committed inline. It is read from the OP11
+# audit report (audits/op11_nu/op11_report.json), which is the *only* source
+# allowed to set a non-None NU. No manual override. See CLAUDE_op11_nu.md §10
+# and constraint 4: the silent ν = 5.08e-3 commit that produced the R11 state
+# is exactly what this gate removes.
 # ---------------------------------------------------------------------------
-NU = 5.08e-3                 # joint extractor (CL5+CL6 RVM running), OP11 known
-NU_BULK = 5.08e-3            # bulk cascade running, identified with NU at leading order
+import json as _json
+import pathlib as _pathlib
+
+_OP11_REPORT_PATH = (
+    _pathlib.Path(__file__).resolve().parent.parent
+    / "audits" / "op11_nu" / "op11_report.json"
+)
+
+_OP11_COMMITTABLE = {
+    "RESOLVED_JOINT", "RESOLVED_STANDALONE", "RESOLVED_THIRD_VALUE",
+    "DATASET_DEPENDENT_DOCUMENTED",
+}
+
+
+def _load_nu():
+    if not _OP11_REPORT_PATH.exists():
+        return None, None, "BLOCKED: OP11 audit has not been run"
+    report = _json.loads(_OP11_REPORT_PATH.read_text(encoding="utf-8"))
+    if report["classification"] not in _OP11_COMMITTABLE:
+        return None, None, f"BLOCKED on OP11: {report['classification']}"
+    return (
+        report["committed_nu"],
+        report["committed_nu_uncertainty"],
+        report["provenance"],
+    )
+
+
+NU, NU_UNCERTAINTY, NU_PROVENANCE = _load_nu()
+# Bulk cascade running is identified with NU at leading order; tying it to the
+# gated value closes the backdoor whereby NU could be committed via NU_BULK.
+NU_BULK = NU
 RHO_CASCADE = 0.50           # geometric suppression between adjacent cascade stages
 N_CASCADE = 8                # cascade stages (candidates {6, 8, 11}, central value 8)
 ALPHA_CASCADE = 1.0e-2       # cosmic-string scaling → Gμ ≈ 1e-10² × scale → tuned to NG15 band
